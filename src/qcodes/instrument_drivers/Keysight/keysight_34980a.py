@@ -1,9 +1,8 @@
 import logging
 import re
 import warnings
-from collections.abc import Callable
 from functools import wraps
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from qcodes import validators as vals
 from qcodes.instrument import VisaInstrument
@@ -11,13 +10,16 @@ from qcodes.instrument import VisaInstrument
 from .keysight_34934a import Keysight34934A
 from .keysight_34980a_submodules import Keysight34980ASwitchMatrixSubModule
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 KEYSIGHT_MODELS = {'34934A': Keysight34934A}
 
 
 T = TypeVar('T')
 
 
-def post_execution_status_poll(func: Callable[..., T]) -> Callable[..., T]:
+def post_execution_status_poll(func: "Callable[..., T]") -> "Callable[..., T]":
     """
     Generates a decorator that clears the instrument's status registers
     before executing the actual call and reads the status register after the

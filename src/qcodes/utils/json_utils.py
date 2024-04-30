@@ -78,7 +78,7 @@ class NumpyJSONEncoder(json.JSONEncoder):
                 # causing an infinte recursion, so we do not
                 # try to pickle bytes or bytearrays
                 if hasattr(o, "__getnewargs__") and not isinstance(
-                    o, (bytes, bytearray)
+                    o, bytes | bytearray
                 ):
                     return {
                         "__class__": type(o).__name__,

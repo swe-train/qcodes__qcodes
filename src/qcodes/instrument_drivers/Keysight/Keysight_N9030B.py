@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -13,6 +12,9 @@ from qcodes.parameters import (
     create_on_off_val_mapping,
 )
 from qcodes.validators import Arrays, Bool, Enum, Ints, Numbers
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class FrequencyAxis(Parameter):

@@ -74,7 +74,7 @@ def deprecate(
         return func(*args, **kwargs)
 
     def actual_decorator(obj: Any) -> Any:
-        if isinstance(obj, (types.FunctionType, types.MethodType)):
+        if isinstance(obj, types.FunctionType | types.MethodType):
             func = cast(Callable[..., Any], obj)
 
             return decorate_callable(func)  # pyright: ignore[reportCallIssue]
@@ -82,7 +82,7 @@ def deprecate(
             # this would need to be recursive
             for m_name in dir(obj):
                 m = getattr(obj, m_name)
-                if isinstance(m, (types.FunctionType, types.MethodType)):
+                if isinstance(m, types.FunctionType | types.MethodType):
                     # skip static methods, since they are not wrapped correctly
                     # by wrapt.
                     # if anyone reading this knows how the following line
@@ -90,7 +90,7 @@ def deprecate(
                     # wrapt cannot wrap class methods in 3.11.0
                     # see https://github.com/python/cpython/issues/63272
                     if isinstance(
-                        obj.__dict__.get(m_name, None), (staticmethod, classmethod)
+                        obj.__dict__.get(m_name, None), staticmethod | classmethod
                     ):
                         continue
 

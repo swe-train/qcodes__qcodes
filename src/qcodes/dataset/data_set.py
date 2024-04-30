@@ -382,7 +382,7 @@ class DataSet(BaseDataSet):
         snapshot_raw = select_one_where(
             self.conn, "runs", "snapshot", "run_id", self.run_id
         )
-        assert isinstance(snapshot_raw, (str, type(None)))
+        assert isinstance(snapshot_raw, str | type(None))
         return snapshot_raw
 
     @property
@@ -424,7 +424,7 @@ class DataSet(BaseDataSet):
             parameters = select_one_where(
                 self.conn, "runs", "parameters", "run_id", self.run_id
             )
-            assert isinstance(parameters, (str, type(None)))
+            assert isinstance(parameters, str | type(None))
             return parameters
 
     @property

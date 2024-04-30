@@ -1,9 +1,11 @@
-from collections.abc import Callable
 from functools import partial
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from qcodes.instrument import VisaInstrument
 from qcodes.validators import Bool, Enum, Ints, MultiType, Numbers
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def _parse_output_string(s: str) -> str:
@@ -204,7 +206,7 @@ class Keithley2000(VisaInstrument):
         return float(self.ask("SENSE:DATA:FRESH?"))
 
     def _get_mode_param(
-        self, parameter: str, parser: Callable[[str], Any]
+        self, parameter: str, parser: "Callable[[str], Any]"
     ) -> float | str | bool:
         """Read the current Keithley mode and ask for a parameter"""
         mode = _parse_output_string(self._mode_map[self.mode()])

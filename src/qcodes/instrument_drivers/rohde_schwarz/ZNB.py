@@ -767,7 +767,10 @@ class RohdeSchwarzZNBChannel(InstrumentChannel):
         stop = self.stop()
         npts = self.npts()
         for _, parameter in self.parameters.items():
-            if isinstance(parameter, (FrequencySweep, FrequencySweepMagPhase, FrequencySweepDBPhase)):
+            if isinstance(
+                parameter,
+                FrequencySweep | FrequencySweepMagPhase | FrequencySweepDBPhase,
+            ):
                 try:
                     parameter.set_sweep(start, stop, npts)
                 except AttributeError:

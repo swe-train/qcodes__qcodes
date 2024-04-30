@@ -24,7 +24,6 @@ from typing import (
     AnyStr,
     ClassVar,
     NoReturn,
-    Union,
     cast,
     overload,
 )
@@ -85,7 +84,7 @@ def get_config_use_monitor() -> str | None:
     return qcodes.config["station"]["use_monitor"]
 
 
-ChannelOrInstrumentBase = Union[InstrumentBase, ChannelTuple]
+ChannelOrInstrumentBase = InstrumentBase | ChannelTuple
 
 
 class ValidationWarning(Warning):
@@ -220,9 +219,7 @@ class Station(Metadatable, DelegateAttributes):
                     snap['instruments'][name] = itm.snapshot(update=update)
                 else:
                     components_to_remove.append(name)
-            elif isinstance(itm, (Parameter,
-                                  ManualParameter
-                                  )):
+            elif isinstance(itm, Parameter | ManualParameter):
                 if not itm.snapshot_exclude:
                     snap['parameters'][name] = itm.snapshot(update=update)
             else:

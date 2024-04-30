@@ -844,7 +844,7 @@ class TektronixAWG5014(VisaInstrument):
             assert isinstance(value, str)
             record_data = value.encode("ASCII")
         else:
-            assert isinstance(value, (abc.Sequence, np.ndarray))
+            assert isinstance(value, abc.Sequence | np.ndarray)
             if dtype[-1] == "H" and isinstance(value, np.ndarray):
                 # numpy conversion is fast
                 record_data = value.astype("<u2").tobytes()

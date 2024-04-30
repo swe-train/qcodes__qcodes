@@ -15,7 +15,7 @@ interdependencies_, which is an instance of InterDependencies_
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from typing_extensions import TypedDict
 
@@ -56,7 +56,6 @@ class RunDescriberV3Dict(RunDescriberV2Dict):
     # dict from dependent to dict from depenency to num points in grid
 
 
-RunDescriberDicts = Union[RunDescriberV0Dict,
-                          RunDescriberV1Dict,
-                          RunDescriberV2Dict,
-                          RunDescriberV3Dict]
+RunDescriberDicts = (
+    RunDescriberV0Dict | RunDescriberV1Dict | RunDescriberV2Dict | RunDescriberV3Dict
+)

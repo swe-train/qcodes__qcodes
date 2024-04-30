@@ -1,8 +1,10 @@
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
-def qcodes_abstractmethod(funcobj: Callable[..., Any]) -> Callable[..., Any]:
+def qcodes_abstractmethod(funcobj: "Callable[..., Any]") -> "Callable[..., Any]":
     """
     A decorator indicating abstract methods.
 

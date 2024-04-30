@@ -1,14 +1,16 @@
 import warnings
-from collections.abc import Callable
 from functools import partial
 from time import sleep
-from typing import Any, ClassVar, Literal, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, cast
 
 import numpy as np
 from pyvisa import VisaIOError
 
 import qcodes.validators as vals
 from qcodes.instrument import VisaInstrument
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class DynaCool(VisaInstrument):
@@ -35,7 +37,7 @@ class DynaCool(VisaInstrument):
     temp_params = ("temperature_setpoint", "temperature_rate", "temperature_settling")
     field_params = ("field_target", "field_rate", "field_approach")
 
-    _errors: ClassVar[dict[int, Callable[[], None]]] = {
+    _errors: ClassVar[dict[int, "Callable[[], None]"]] = {
         -2: lambda: warnings.warn("Unknown command"),
         1: lambda: None,
         0: lambda: None,

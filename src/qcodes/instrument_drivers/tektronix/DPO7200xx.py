@@ -5,9 +5,8 @@ MSO70000/C/DX Series Digital Oscilloscopes
 """
 import textwrap
 import time
-from collections.abc import Callable
 from functools import partial
-from typing import Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import numpy as np
 from typing_extensions import deprecated
@@ -20,6 +19,9 @@ from qcodes.parameters import (
 )
 from qcodes.utils import QCoDeSDeprecationWarning
 from qcodes.validators import Arrays, Enum
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def strip_quotes(string: str) -> str:
@@ -301,7 +303,7 @@ class TektronixDPOWaveform(InstrumentChannel):
             parameter_class=ParameterWithSetpoints
         )
 
-    def _get_cmd(self, cmd_string: str) -> Callable[[], str]:
+    def _get_cmd(self, cmd_string: str) -> "Callable[[], str]":
         """
         Parameters defined in this submodule require the correct
         data source being selected first.
