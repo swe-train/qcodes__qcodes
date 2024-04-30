@@ -1,6 +1,6 @@
 import logging
 from functools import partial
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
@@ -347,8 +347,8 @@ class RohdeSchwarzZNBChannel(InstrumentChannel):
         parent: "ZNB",
         name: str,
         channel: int,
-        vna_parameter: Optional[str] = None,
-        existing_trace_to_bind_to: Optional[str] = None,
+        vna_parameter: str | None = None,
+        existing_trace_to_bind_to: str | None = None,
     ) -> None:
         """
         Args:

@@ -1,6 +1,6 @@
 import re
 import time
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from pyvisa import constants, errors
@@ -140,8 +140,8 @@ class KeysightPNAPort(InstrumentChannel):
         parent: "PNABase",
         name: str,
         port: int,
-        min_power: Union[int, float],
-        max_power: Union[int, float],
+        min_power: int | float,
+        max_power: int | float,
         **kwargs: Any,
     ) -> None:
         super().__init__(parent, name, **kwargs)
@@ -160,9 +160,7 @@ class KeysightPNAPort(InstrumentChannel):
                            vals=Numbers(min_value=min_power,
                                         max_value=max_power))
 
-    def _set_power_limits(self,
-                          min_power: Union[int, float],
-                          max_power: Union[int, float]) -> None:
+    def _set_power_limits(self, min_power: int | float, max_power: int | float) -> None:
         """
         Set port power limits
         """
@@ -384,16 +382,20 @@ class PNABase(VisaInstrument):
           may have unexpected results.
     """
 
-    def __init__(self,
-                 name: str,
-                 address: str,
-                 # Set frequency ranges
-                 min_freq: Union[int, float], max_freq: Union[int, float],
-                 # Set power ranges
-                 min_power: Union[int, float], max_power: Union[int, float],
-                 nports: int, # Number of ports on the PNA
-                 **kwargs: Any) -> None:
-        super().__init__(name, address, terminator='\n', **kwargs)
+    def __init__(
+        self,
+        name: str,
+        address: str,
+        # Set frequency ranges
+        min_freq: int | float,
+        max_freq: int | float,
+        # Set power ranges
+        min_power: int | float,
+        max_power: int | float,
+        nports: int,  # Number of ports on the PNA
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(name, address, terminator="\n", **kwargs)
         self.min_freq = min_freq
         self.max_freq = max_freq
 
@@ -710,9 +712,7 @@ class PNABase(VisaInstrument):
         """
         self.averages_enabled(False)
 
-    def _set_power_limits(self,
-                          min_power: Union[int, float],
-                          max_power: Union[int, float]) -> None:
+    def _set_power_limits(self, min_power: int | float, max_power: int | float) -> None:
         """
         Set port power limits
         """

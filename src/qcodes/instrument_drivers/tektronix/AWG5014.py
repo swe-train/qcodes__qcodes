@@ -6,7 +6,7 @@ from collections import abc
 from collections.abc import Sequence
 from io import BytesIO
 from time import localtime, sleep
-from typing import Any, ClassVar, Literal, NamedTuple, Optional, Union, cast
+from typing import Any, ClassVar, Literal, NamedTuple, cast
 
 import numpy as np
 from pyvisa.errors import VisaIOError
@@ -158,9 +158,7 @@ class TektronixAWG5014(VisaInstrument):
         self._address = address
         self.num_channels = num_channels
 
-        self._values: dict[
-            str, dict[str, dict[str, Union[np.ndarray, float, None]]]
-        ] = {}
+        self._values: dict[str, dict[str, dict[str, np.ndarray | float | None]]] = {}
         self._values["files"] = {}
 
         self.add_function('reset', call_cmd='*RST')
@@ -817,10 +815,7 @@ class TektronixAWG5014(VisaInstrument):
     ######################
 
     def _pack_record(
-            self,
-            name: str,
-            value: Union[float, str, Sequence[Any], np.ndarray],
-            dtype: str
+        self, name: str, value: float | str | Sequence[Any] | np.ndarray, dtype: str
     ) -> bytes:
         """
         packs awg_file record into a struct in the folowing way:
@@ -911,7 +906,7 @@ class TektronixAWG5014(VisaInstrument):
         }
         return AWG_sequence_cfg
 
-    def generate_channel_cfg(self) -> dict[str, Optional[float]]:
+    def generate_channel_cfg(self) -> dict[str, float | None]:
         """
         Function to query if the current channel settings that have
         been changed from their default value and put them in a
@@ -983,7 +978,7 @@ class TektronixAWG5014(VisaInstrument):
 
         # the return value of the parameter is different from what goes
         # into the .awg file, so we translate it
-        def mrkdeltrans(x: Optional[float]) -> Optional[float]:
+        def mrkdeltrans(x: float | None) -> float | None:
             if x is None:
                 return None
             else:
@@ -997,7 +992,7 @@ class TektronixAWG5014(VisaInstrument):
                       mrkdeltrans(self.ch3_m2_del.get_latest()),
                       mrkdeltrans(self.ch4_m2_del.get_latest())]
 
-        AWG_channel_cfg: dict[str, Optional[float]] = {}
+        AWG_channel_cfg: dict[str, float | None] = {}
 
         for chan in range(1, self.num_channels+1):
             if dirouts[chan - 1] is not None:
@@ -1058,7 +1053,7 @@ class TektronixAWG5014(VisaInstrument):
         goto_state: Sequence[int],
         jump_to: Sequence[int],
         channel_cfg: dict[str, Any],
-        sequence_cfg: Optional[dict[str, float]] = None,
+        sequence_cfg: dict[str, float] | None = None,
         preservechannelsettings: bool = False,
     ) -> bytes:
         """
@@ -1240,16 +1235,17 @@ class TektronixAWG5014(VisaInstrument):
         self.sequence_length.set(self.sequence_length.get())
 
     def make_awg_file(
-            self,
-            waveforms: Union[Sequence[Sequence[np.ndarray]], Sequence[np.ndarray]],
-            m1s: Union[Sequence[Sequence[np.ndarray]], Sequence[np.ndarray]],
-            m2s: Union[Sequence[Sequence[np.ndarray]], Sequence[np.ndarray]],
-            nreps: Sequence[int],
-            trig_waits: Sequence[int],
-            goto_states: Sequence[int],
-            jump_tos: Sequence[int],
-            channels: Optional[Sequence[int]] = None,
-            preservechannelsettings: bool = True) -> bytes:
+        self,
+        waveforms: Sequence[Sequence[np.ndarray]] | Sequence[np.ndarray],
+        m1s: Sequence[Sequence[np.ndarray]] | Sequence[np.ndarray],
+        m2s: Sequence[Sequence[np.ndarray]] | Sequence[np.ndarray],
+        nreps: Sequence[int],
+        trig_waits: Sequence[int],
+        goto_states: Sequence[int],
+        jump_tos: Sequence[int],
+        channels: Sequence[int] | None = None,
+        preservechannelsettings: bool = True,
+    ) -> bytes:
         """
         Args:
             waveforms: A list of the waveforms to be packed. The list
@@ -1331,17 +1327,17 @@ class TektronixAWG5014(VisaInstrument):
             preservechannelsettings=preservechannelsettings)
 
     def make_send_and_load_awg_file(
-            self,
-            waveforms: Sequence[Sequence[np.ndarray]],
-            m1s: Sequence[Sequence[np.ndarray]],
-            m2s: Sequence[Sequence[np.ndarray]],
-            nreps: Sequence[int],
-            trig_waits: Sequence[int],
-            goto_states: Sequence[int],
-            jump_tos: Sequence[int],
-            channels: Optional[Sequence[int]] = None,
-            filename: str = 'customawgfile.awg',
-            preservechannelsettings: bool = True
+        self,
+        waveforms: Sequence[Sequence[np.ndarray]],
+        m1s: Sequence[Sequence[np.ndarray]],
+        m2s: Sequence[Sequence[np.ndarray]],
+        nreps: Sequence[int],
+        trig_waits: Sequence[int],
+        goto_states: Sequence[int],
+        jump_tos: Sequence[int],
+        channels: Sequence[int] | None = None,
+        filename: str = "customawgfile.awg",
+        preservechannelsettings: bool = True,
     ) -> None:
         """
         Makes an .awg-file, sends it to the AWG and loads it. The .awg-file
@@ -1410,17 +1406,19 @@ class TektronixAWG5014(VisaInstrument):
         loadfrom = f'{currentdir}{filename}'
         self.load_awg_file(loadfrom)
 
-    def make_and_save_awg_file(self,
-                               waveforms: Sequence[Sequence[np.ndarray]],
-                               m1s: Sequence[Sequence[np.ndarray]],
-                               m2s: Sequence[Sequence[np.ndarray]],
-                               nreps: Sequence[int],
-                               trig_waits: Sequence[int],
-                               goto_states: Sequence[int],
-                               jump_tos: Sequence[int],
-                               channels: Optional[Sequence[int]] = None,
-                               filename: str = 'customawgfile.awg',
-                               preservechannelsettings: bool = True) -> None:
+    def make_and_save_awg_file(
+        self,
+        waveforms: Sequence[Sequence[np.ndarray]],
+        m1s: Sequence[Sequence[np.ndarray]],
+        m2s: Sequence[Sequence[np.ndarray]],
+        nreps: Sequence[int],
+        trig_waits: Sequence[int],
+        goto_states: Sequence[int],
+        jump_tos: Sequence[int],
+        channels: Sequence[int] | None = None,
+        filename: str = "customawgfile.awg",
+        preservechannelsettings: bool = True,
+    ) -> None:
         """
         Makes an .awg-file and saves it locally.
 
@@ -1548,8 +1546,8 @@ class TektronixAWG5014(VisaInstrument):
     ###########################
 
     def _file_dict(
-        self, wf: np.ndarray, m1: np.ndarray, m2: np.ndarray, clock: Optional[float]
-    ) -> dict[str, Union[np.ndarray, float, None]]:
+        self, wf: np.ndarray, m1: np.ndarray, m2: np.ndarray, clock: float | None
+    ) -> dict[str, np.ndarray | float | None]:
         """
         Make a file dictionary as used by self.send_waveform_to_list
 

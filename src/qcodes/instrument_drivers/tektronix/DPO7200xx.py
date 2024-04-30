@@ -5,8 +5,9 @@ MSO70000/C/DX Series Digital Oscilloscopes
 """
 import textwrap
 import time
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, ClassVar, Union, cast
+from typing import Any, ClassVar, cast
 
 import numpy as np
 from typing_extensions import deprecated
@@ -145,11 +146,7 @@ class TektronixDPOData(InstrumentChannel):
     retrieving waveform data.
     """
 
-    def __init__(
-            self,
-            parent: Union[Instrument, InstrumentChannel],
-            name: str
-    ) -> None:
+    def __init__(self, parent: Instrument | InstrumentChannel, name: str) -> None:
 
         super().__init__(parent, name)
         # We can choose to retrieve data from arbitrary
@@ -213,10 +210,10 @@ class TektronixDPOWaveform(InstrumentChannel):
     ]
 
     def __init__(
-            self,
-            parent: Union[Instrument, InstrumentChannel],
-            name: str,
-            identifier: str,
+        self,
+        parent: Instrument | InstrumentChannel,
+        name: str,
+        identifier: str,
     ) -> None:
 
         super().__init__(parent, name)
@@ -375,11 +372,7 @@ class TektronixDPOWaveformFormat(InstrumentChannel):
     specific waveform sources (e.g. channel1 or math2)
     """
 
-    def __init__(
-            self,
-            parent: Union[Instrument, InstrumentChannel],
-            name: str
-    ) -> None:
+    def __init__(self, parent: Instrument | InstrumentChannel, name: str) -> None:
 
         super().__init__(parent, name)
 
@@ -430,10 +423,10 @@ class TektronixDPOChannel(InstrumentChannel):
     the instrument display.
     """
     def __init__(
-            self,
-            parent: Union[Instrument, InstrumentChannel],
-            name: str,
-            channel_number: int,
+        self,
+        parent: Instrument | InstrumentChannel,
+        name: str,
+        channel_number: int,
     ) -> None:
 
         super().__init__(parent, name)
@@ -525,11 +518,7 @@ class TektronixDPOHorizontal(InstrumentChannel):
     This module controls the horizontal axis of the scope
     """
 
-    def __init__(
-            self,
-            parent: Union[Instrument, InstrumentChannel],
-            name: str
-    ) -> None:
+    def __init__(self, parent: Instrument | InstrumentChannel, name: str) -> None:
 
         super().__init__(parent, name)
 
